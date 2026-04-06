@@ -1,10 +1,10 @@
 service: mimotomipasion-marketplace-api
 
-frameworkVersion: '3'
+frameworkVersion: '4'
 
 provider:
   name: aws
-  runtime: nodejs18.x
+  runtime: nodejs22.x
   stage: ${opt:stage, 'dev'}
   region: us-east-1
   environment:
@@ -41,8 +41,10 @@ custom:
     start:
       port: 8000
       inMemory: true
-      migrate: true
-      seed: true
+      migrate: false
+      seed: false
+      accessKeyId: "DEFAULT_ACCESS_KEY"
+      secretAccessKey: "DEFAULT_SECRET"
     seed:
       default:
         sources:
@@ -114,5 +116,5 @@ resources:
               ProjectionType: ALL
 
 plugins:
-  - serverless-dynamodb
+  - serverless-dynamodb-local
   - serverless-offline

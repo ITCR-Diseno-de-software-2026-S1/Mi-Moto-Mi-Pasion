@@ -4,14 +4,14 @@
   "description": "API Serverless para mercado de intercambio de partes de motos",
   "main": "src/index.js",
   "scripts": {
-    "dev": "serverless offline start",
+    "dev": "set AWS_ACCESS_KEY_ID=local && set AWS_SECRET_ACCESS_KEY=local && serverless offline start",
     "deploy:prod": "serverless deploy --stage prod",
     "test": "jest --coverage",
     "test:unit": "jest tests/unit --coverage",
     "test:watch": "jest --watch",
     "db:init": "node scripts/initDb.js",
     "db:seed": "node scripts/seedDb.js",
-    "start": "npm run db:init && npm run dev"
+    "start": "npm run dev"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.540.0",
@@ -20,9 +20,9 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "serverless": "^3.38.0",
-    "serverless-offline": "^13.3.3",
-    "serverless-dynamodb": "^0.2.40"
+    "serverless": "^4.33.3",
+    "serverless-dynamodb-local": "^0.2.40",
+    "serverless-offline": "^14.5.0"
   },
   "jest": {
     "testEnvironment": "node",

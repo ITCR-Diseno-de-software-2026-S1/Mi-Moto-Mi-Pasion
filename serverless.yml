@@ -9,22 +9,9 @@ provider:
   region: us-east-1
   environment:
     STAGE: ${self:provider.stage}
+    IS_OFFLINE: ${env:IS_OFFLINE, 'false'}
     DYNAMODB_TABLE: ${self:service}-partes-${self:provider.stage}
     DYNAMODB_ENDPOINT: ${self:custom.dynamodbEndpoint.${self:provider.stage}, ''}
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-        - dynamodb:CreateTable
-        - dynamodb:DescribeTable
-      Resource:
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
-        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
 
 custom:
   dynamodbEndpoint:
@@ -34,7 +21,6 @@ custom:
     httpPort: 3000
     host: 0.0.0.0
     noPrependStageInUrl: true
-    useChildProcesses: true
   dynamodb:
     stages:
       - dev
@@ -43,13 +29,8 @@ custom:
       inMemory: true
       migrate: false
       seed: false
-      accessKeyId: "DEFAULT_ACCESS_KEY"
-      secretAccessKey: "DEFAULT_SECRET"
-    seed:
-      default:
-        sources:
-          - table: ${self:provider.environment.DYNAMODB_TABLE}
-            sources: [./scripts/seed-data.json]
+      accessKeyId: "local"
+      secretAccessKey: "local"
 
 functions:
   crearParte:
@@ -59,7 +40,6 @@ functions:
           path: partes
           method: post
           cors: true
-    description: "Registrar una nueva parte de moto en el marketplace"
 
   listarPartes:
     handler: src/functions/partes.listar
@@ -68,7 +48,6 @@ functions:
           path: partes
           method: get
           cors: true
-    description: "Listar partes de motos, opcionalmente filtradas por tipo"
 
   obtenerParte:
     handler: src/functions/partes.obtener
@@ -77,7 +56,6 @@ functions:
           path: partes/{id}
           method: get
           cors: true
-    description: "Obtener una parte específica por ID"
 
   eliminarParte:
     handler: src/functions/partes.eliminar
@@ -86,7 +64,6 @@ functions:
           path: partes/{id}
           method: delete
           cors: true
-    description: "Eliminar una parte del marketplace"
 
 resources:
   Resources:

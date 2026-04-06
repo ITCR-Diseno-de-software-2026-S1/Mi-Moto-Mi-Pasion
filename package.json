@@ -4,11 +4,13 @@
   "description": "API Serverless para mercado de intercambio de partes de motos",
   "main": "src/index.js",
   "scripts": {
-    "dev": "set AWS_ACCESS_KEY_ID=local && set AWS_SECRET_ACCESS_KEY=local && serverless offline start",
+    "dev": "serverless offline start",
     "deploy:prod": "serverless deploy --stage prod",
     "test": "jest --coverage",
     "test:unit": "jest tests/unit --coverage",
     "test:watch": "jest --watch",
+    "db:install": "serverless dynamodb install",
+    "db:start": "serverless dynamodb start",
     "db:init": "node scripts/initDb.js",
     "db:seed": "node scripts/seedDb.js",
     "start": "npm run dev"

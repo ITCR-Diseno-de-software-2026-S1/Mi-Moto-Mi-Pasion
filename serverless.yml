@@ -1,0 +1,118 @@
+service: mimotomipasion-marketplace-api
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    STAGE: ${self:provider.stage}
+    DYNAMODB_TABLE: ${self:service}-partes-${self:provider.stage}
+    DYNAMODB_ENDPOINT: ${self:custom.dynamodbEndpoint.${self:provider.stage}, ''}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:CreateTable
+        - dynamodb:DescribeTable
+      Resource:
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+        - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/*"
+
+custom:
+  dynamodbEndpoint:
+    dev: "http://localhost:8000"
+    prod: ""
+  serverless-offline:
+    httpPort: 3000
+    host: 0.0.0.0
+    noPrependStageInUrl: true
+    useChildProcesses: true
+  dynamodb:
+    stages:
+      - dev
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+      seed: true
+    seed:
+      default:
+        sources:
+          - table: ${self:provider.environment.DYNAMODB_TABLE}
+            sources: [./scripts/seed-data.json]
+
+functions:
+  crearParte:
+    handler: src/functions/partes.crear
+    events:
+      - http:
+          path: partes
+          method: post
+          cors: true
+    description: "Registrar una nueva parte de moto en el marketplace"
+
+  listarPartes:
+    handler: src/functions/partes.listar
+    events:
+      - http:
+          path: partes
+          method: get
+          cors: true
+    description: "Listar partes de motos, opcionalmente filtradas por tipo"
+
+  obtenerParte:
+    handler: src/functions/partes.obtener
+    events:
+      - http:
+          path: partes/{id}
+          method: get
+          cors: true
+    description: "Obtener una parte específica por ID"
+
+  eliminarParte:
+    handler: src/functions/partes.eliminar
+    events:
+      - http:
+          path: partes/{id}
+          method: delete
+          cors: true
+    description: "Eliminar una parte del marketplace"
+
+resources:
+  Resources:
+    PartesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+          - AttributeName: tipo
+            AttributeType: S
+          - AttributeName: createdAt
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        GlobalSecondaryIndexes:
+          - IndexName: tipo-createdAt-index
+            KeySchema:
+              - AttributeName: tipo
+                KeyType: HASH
+              - AttributeName: createdAt
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+
+plugins:
+  - serverless-dynamodb
+  - serverless-offline

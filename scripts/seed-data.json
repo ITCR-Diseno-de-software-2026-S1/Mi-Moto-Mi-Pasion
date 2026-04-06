@@ -1,0 +1,38 @@
+[
+  {
+    "id": "seed-001",
+    "nombre": "Carburador Honda CBR 600",
+    "tipo": "motor",
+    "categoria": "usada",
+    "precio": 85,
+    "descripcion": "Carburador en buen estado, limpiado recientemente",
+    "vendedor": "MotoPartes CR",
+    "estado": "disponible",
+    "createdAt": "2024-01-15T10:00:00.000Z",
+    "updatedAt": "2024-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "seed-002",
+    "nombre": "Pastillas de freno Brembo Racing",
+    "tipo": "frenos",
+    "categoria": "nueva",
+    "precio": 45,
+    "descripcion": "Pastillas de alto rendimiento para pista y calle",
+    "vendedor": "SpeedShop SJO",
+    "estado": "disponible",
+    "createdAt": "2024-01-15T11:00:00.000Z",
+    "updatedAt": "2024-01-15T11:00:00.000Z"
+  },
+  {
+    "id": "seed-003",
+    "nombre": "Amortiguador trasero YSS G-Sport",
+    "tipo": "suspension",
+    "categoria": "nueva",
+    "precio": 220,
+    "descripcion": "Amortiguador ajustable de alta calidad",
+    "vendedor": "SuspensionPro",
+    "estado": "disponible",
+    "createdAt": "2024-01-15T12:00:00.000Z",
+    "updatedAt": "2024-01-15T12:00:00.000Z"
+  }
+]

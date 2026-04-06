@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MiMotoMiPasión — Marketplace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0e0e10;
+      --bg2: #161619;
+      --bg3: #1d1d21;
+      --surface: #222226;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --text: #f0f0f0;
+      --muted: #888;
+      --accent: #ff4d00;
+      --accent2: #ff7a3d;
+      --green: #22c55e;
+      --red: #ef4444;
+      --yellow: #f59e0b;
+      --blue: #3b82f6;
+    }
+
+    body {
+      font-family: 'Barlow', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+    .nav-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: 'Barlow', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .nav-btn:hover { background: var(--accent2); }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 3rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg2);
+    }
+    .hero-title {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+    }
+    .hero-title em { color: var(--accent); font-style: normal; }
+    .hero-sub { color: var(--muted); font-size: 1rem; margin-bottom: 1.5rem; }
+
+    /* ── FILTROS ── */
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-chip {
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .filter-chip:hover { border-color: var(--accent); color: var(--text); }
+    .filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: flex;
+      gap: 2rem;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .stats-bar strong { color: var(--text); font-weight: 600; }
+
+    /* ── MAIN ── */
+    main { padding: 1.5rem 2rem 3rem; }
+
+    /* ── GRID ── */
+    .parts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+
+    /* ── CARD ── */
+    .part-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.15s;
+      position: relative;
+    }
+    .part-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .card-header {
+      background: var(--bg3);
+      padding: 1rem 1rem 0.75rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .tipo-badge {
+      font-size: 20px;
+      width: 40px;
+      height: 40px;
+      background: var(--surface);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-title { font-weight: 600; font-size: 15px; line-height: 1.3; flex: 1; }
+    .card-tipo {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--muted);
+      margin-top: 2px;
+      font-weight: 600;
+    }
+    .card-body { padding: 0.75rem 1rem; }
+    .card-desc { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 0.75rem; min-height: 36px; }
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .price {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent2);
+      letter-spacing: -0.5px;
+    }
+    .price span { font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .categoria-tag {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+    .cat-nueva { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .cat-usada { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .cat-reacondicionada { background: rgba(59,130,246,0.15); color: #93c5fd; }
+
+    .vendor-row {
+      padding: 0 1rem 0.75rem;
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .del-btn {
+      background: none;
+      border: 1px solid rgba(239,68,68,0.3);
+      color: rgba(239,68,68,0.7);
+      border-radius: 5px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+    .del-btn:hover { background: rgba(239,68,68,0.12); border-color: var(--red); color: var(--red); }
+
+    /* ── EMPTY ── */
+    .empty {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+    .empty h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: 0.5rem; }
+
+    /* ── LOADING ── */
+    .loading-row {
+      grid-column: 1/-1;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .dot { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; animation: bounce 1.2s ease-in-out infinite; }
+    .dot:nth-child(2) { animation-delay: 0.2s; }
+    .dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%, 100% { transform: scale(0.5); opacity: 0.4; } 50% { transform: scale(1.2); opacity: 1; } }
+
+    /* ── MODAL ── */
+    .modal-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-bg.open { display: flex; }
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      width: 100%;
+      max-width: 500px;
+      padding: 1.5rem;
+    }
+    .modal h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+    }
+    .form-row { margin-bottom: 1rem; }
+    .form-row label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-row input, .form-row select, .form-row textarea {
+      width: 100%;
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 7px;
+      font-family: 'Barlow', sans-serif;
+      font-size: 15px;
+      transition: border-color 0.15s;
+    }
+    .form-row input:focus, .form-row select:focus, .form-row textarea:focus { outline: none; border-color: var(--accent); }
+    .form-row select option { background: var(--bg3); }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 1.25rem; justify-content: flex-end; }
+    .btn-cancel { background: var(--surface); border: 1px solid var(--border2); color: var(--muted); padding: 9px 20px; border-radius: 7px; font-weight: 600; cursor: pointer; font-size: 14px; }
+    .btn-submit { background: var(--accent); border: none; color: #fff; padding: 9px 24px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+    .btn-submit:hover { background: var(--accent2); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 14px;
+      font-weight: 500;
+      max-width: 320px;
+      z-index: 300;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 3px solid var(--green); }
+    .toast.error { border-left: 3px solid var(--red); }
+
+    /* ── API STATUS ── */
+    .api-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      background: rgba(34,197,94,0.1);
+      color: var(--green);
+    }
+    .api-status.offline { background: rgba(239,68,68,0.1); color: var(--red); }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    @media (max-width: 640px) {
+      nav, .stats-bar, main { padding-left: 1rem; padding-right: 1rem; }
+      .hero { padding: 2rem 1rem 1.5rem; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">MiMoto<span>MiPasión</span></div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <div class="api-status" id="apiStatus">
+      <div class="status-dot"></div>
+      <span>API Local</span>
+    </div>
+    <button class="nav-btn" onclick="openModal()">+ Publicar Parte</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <h1 class="hero-title">El marketplace de<br><em>partes de moto</em><br>para los apasionados</h1>
+  <p class="hero-sub">Compra, vende e intercambia partes. Serverless API local · DynamoDB · Node.js</p>
+  <div class="filters" id="filtros">
+    <button class="filter-chip active" data-tipo="">Todos</button>
+    <button class="filter-chip" data-tipo="motor">Motor</button>
+    <button class="filter-chip" data-tipo="frenos">Frenos</button>
+    <button class="filter-chip" data-tipo="suspension">Suspensión</button>
+    <button class="filter-chip" data-tipo="transmision">Transmisión</button>
+    <button class="filter-chip" data-tipo="electrico">Eléctrico</button>
+    <button class="filter-chip" data-tipo="carroceria">Carrocería</button>
+    <button class="filter-chip" data-tipo="escape">Escape</button>
+    <button class="filter-chip" data-tipo="ruedas">Ruedas</button>
+    <button class="filter-chip" data-tipo="accesorios">Accesorios</button>
+  </div>
+</section>
+
+<div class="stats-bar" id="statsBar">
+  <span>Cargando partes...</span>
+</div>
+
+<main>
+  <div class="parts-grid" id="partsGrid">
+    <div class="loading-row">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+  </div>
+</main>
+
+<!-- MODAL CREAR PARTE -->
+<div class="modal-bg" id="modalBg" onclick="closeModalOnBg(event)">
+  <div class="modal">
+    <h2>Publicar una parte</h2>
+    <div class="form-row">
+      <label>Nombre *</label>
+      <input id="f-nombre" type="text" placeholder="Ej: Carburador Keihin CV40" />
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Tipo *</label>
+        <select id="f-tipo">
+          <option value="">— Seleccionar —</option>
+          <option value="motor">Motor</option>
+          <option value="frenos">Frenos</option>
+          <option value="suspension">Suspensión</option>
+          <option value="transmision">Transmisión</option>
+          <option value="electrico">Eléctrico</option>
+          <option value="carroceria">Carrocería</option>
+          <option value="escape">Escape</option>
+          <option value="ruedas">Ruedas</option>
+          <option value="accesorios">Accesorios</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Categoría</label>
+        <select id="f-categoria">
+          <option value="usada">Usada</option>
+          <option value="nueva">Nueva</option>
+          <option value="reacondicionada">Reacondicionada</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Precio (USD) *</label>
+        <input id="f-precio" type="number" min="0" step="0.01" placeholder="0.00" />
+      </div>
+      <div class="form-row">
+        <label>Vendedor</label>
+        <input id="f-vendedor" type="text" placeholder="Tu nombre o tienda" />
+      </div>
+    </div>
+    <div class="form-row">
+      <label>Descripción</label>
+      <textarea id="f-desc" rows="2" placeholder="Estado, compatibilidad, detalles..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-submit" id="btnSubmit" onclick="crearParte()">Publicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const API = 'http://localhost:3000';
+let tipoActivo = '';
+
+const EMOJIS = {
+  motor: '⚙️', frenos: '🛑', suspension: '🔧', transmision: '⛓️',
+  electrico: '⚡', carroceria: '🏍️', escape: '💨', ruedas: '🔵',
+  accesorios: '🎽', otro: '📦'
+};
+
+async function checkApi() {
+  try {
+    const r = await fetch(`${API}/partes`, { signal: AbortSignal.timeout(3000) });
+    const ok = r.ok;
+    const el = document.getElementById('apiStatus');
+    el.innerHTML = `<div class="status-dot"></div><span>${ok ? 'API Online' : 'API Error'}</span>`;
+    el.className = 'api-status' + (ok ? '' : ' offline');
+  } catch {
+    const el = document.getElementById('apiStatus');
+    el.innerHTML = '<div class="status-dot"></div><span>API Offline</span>';
+    el.className = 'api-status offline';
+  }
+}
+
+async function loadPartes(tipo = '') {
+  const grid = document.getElementById('partsGrid');
+  grid.innerHTML = '<div class="loading-row"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  let url = `${API}/partes`;
+  if (tipo) url += `?tipo=${tipo}`;
+
+  try {
+    const r = await fetch(url);
+    const json = await r.json();
+    const partes = json.data?.partes || [];
+
+    const stats = document.getElementById('statsBar');
+    const label = tipo ? `tipo "${tipo}"` : 'todos los tipos';
+    stats.innerHTML = `<span><strong>${partes.length}</strong> partes disponibles · ${label}</span>
+      <span style="margin-left:auto;color:var(--muted);font-size:12px">GET ${url.replace(API,'')}</span>`;
+
+    if (!partes.length) {
+      grid.innerHTML = `<div class="empty">
+        <div class="empty-icon">🏍️</div>
+        <h3>Sin partes disponibles</h3>
+        <p>Sé el primero en publicar una parte${tipo ? ` de tipo <strong>${tipo}</strong>` : ''}.</p>
+      </div>`;
+      return;
+    }
+
+    grid.innerHTML = partes.map(p => renderCard(p)).join('');
+  } catch (err) {
+    grid.innerHTML = `<div class="empty">
+      <div class="empty-icon" style="font-size:2rem">⚠️</div>
+      <h3>No se pudo conectar</h3>
+      <p style="font-size:13px">Asegúrate de que <strong>serverless offline</strong> esté corriendo en el puerto 3000.</p>
+      <p style="font-size:12px;color:var(--muted);margin-top:0.5rem">npm run dev</p>
+    </div>`;
+    document.getElementById('statsBar').innerHTML = `<span style="color:var(--red)">Error al cargar partes</span>`;
+  }
+}
+
+function renderCard(p) {
+  const catClass = { nueva: 'cat-nueva', usada: 'cat-usada', reacondicionada: 'cat-reacondicionada' }[p.categoria] || 'cat-usada';
+  const emoji = EMOJIS[p.tipo] || '📦';
+  const precio = Number(p.precio).toFixed(2);
+  const fecha = new Date(p.createdAt).toLocaleDateString('es-CR', { day:'2-digit', month:'short' });
+  return `<div class="part-card" id="card-${p.id}">
+    <div class="card-header">
+      <div class="tipo-badge">${emoji}</div>
+      <div style="flex:1">
+        <div class="card-title">${esc(p.nombre)}</div>
+        <div class="card-tipo">${p.tipo}</div>
+      </div>
+      <span class="categoria-tag ${catClass}">${p.categoria}</span>
+    </div>
+    <div class="card-body">
+      <p class="card-desc">${esc(p.descripcion) || '<em style="color:var(--muted)">Sin descripción</em>'}</p>
+    </div>
+    <div class="vendor-row">
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="opacity:0.5"><circle cx="8" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      ${esc(p.vendedor)} · ${fecha}
+    </div>
+    <div class="card-footer">
+      <div class="price">$${precio} <span>USD</span></div>
+      <button class="del-btn" onclick="eliminarParte('${p.id}')" title="Eliminar">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M6 4V2h4v2M7 7v5M9 7v5M3 4l1 9a1 1 0 001 1h6a1 1 0 001-1l1-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>`;
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+async function eliminarParte(id) {
+  if (!confirm('¿Eliminar esta parte del marketplace?')) return;
+  try {
+    const r = await fetch(`${API}/partes/${id}`, { method: 'DELETE' });
+    if (r.ok) {
+      document.getElementById(`card-${id}`)?.remove();
+      toast('Parte eliminada del marketplace', 'success');
+      await loadPartes(tipoActivo);
+    } else {
+      toast('No se pudo eliminar la parte', 'error');
+    }
+  } catch { toast('Error de conexión', 'error'); }
+}
+
+async function crearParte() {
+  const nombre = document.getElementById('f-nombre').value.trim();
+  const tipo = document.getElementById('f-tipo').value;
+  const categoria = document.getElementById('f-categoria').value;
+  const precio = parseFloat(document.getElementById('f-precio').value);
+  const vendedor = document.getElementById('f-vendedor').value.trim();
+  const descripcion = document.getElementById('f-desc').value.trim();
+
+  if (!nombre || !tipo || isNaN(precio)) {
+    toast('Completa los campos requeridos: nombre, tipo y precio', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('btnSubmit');
+  btn.disabled = true;
+  btn.textContent = 'Publicando...';
+
+  try {
+    const r = await fetch(`${API}/partes`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, tipo, categoria, precio, vendedor, descripcion })
+    });
+
+    const json = await r.json();
+
+    if (r.status === 201) {
+      toast(`"${nombre}" publicada exitosamente`, 'success');
+      closeModal();
+      clearForm();
+      await loadPartes(tipoActivo);
+    } else {
+      const errores = json.detalles?.join(', ') || json.mensaje || 'Error desconocido';
+      toast(`Error: ${errores}`, 'error');
+    }
+  } catch { toast('Error de conexión con la API', 'error'); }
+  finally { btn.disabled = false; btn.textContent = 'Publicar'; }
+}
+
+function clearForm() {
+  ['f-nombre','f-tipo','f-precio','f-vendedor','f-desc'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('f-categoria').value = 'usada';
+}
+
+function openModal() { document.getElementById('modalBg').classList.add('open'); }
+function closeModal() { document.getElementById('modalBg').classList.remove('open'); }
+function closeModalOnBg(e) { if (e.target === document.getElementById('modalBg')) closeModal(); }
+
+function toast(msg, type = 'success') {
+  const el = document.getElementById('toast');
+  const icon = type === 'success' ? '✓' : '✕';
+  el.innerHTML = `<span style="font-size:14px;font-weight:700;color:${type==='success'?'var(--green)':'var(--red)'}">${icon}</span> ${msg}`;
+  el.className = `toast ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ── Filtros ──
+document.getElementById('filtros').addEventListener('click', (e) => {
+  const chip = e.target.closest('.filter-chip');
+  if (!chip) return;
+  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  tipoActivo = chip.dataset.tipo;
+  loadPartes(tipoActivo);
+});
+
+// ── Init ──
+checkApi();
+loadPartes();
+setInterval(checkApi, 30000);
+</script>
+</body>
+</html>

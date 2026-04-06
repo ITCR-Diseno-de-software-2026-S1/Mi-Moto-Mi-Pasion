@@ -1,0 +1,42 @@
+{
+  "name": "mimotomipasion-marketplace-api",
+  "version": "1.0.0",
+  "description": "API Serverless para mercado de intercambio de partes de motos",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "serverless offline start",
+    "deploy:prod": "serverless deploy --stage prod",
+    "test": "jest --coverage",
+    "test:unit": "jest tests/unit --coverage",
+    "test:watch": "jest --watch",
+    "db:init": "node scripts/initDb.js",
+    "db:seed": "node scripts/seedDb.js",
+    "start": "npm run db:init && npm run dev"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.540.0",
+    "@aws-sdk/lib-dynamodb": "^3.540.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "serverless": "^3.38.0",
+    "serverless-offline": "^13.3.3",
+    "serverless-dynamodb": "^0.2.40"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+      "src/business/**/*.js",
+      "src/models/**/*.js",
+      "src/utils/response.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 90,
+        "lines": 90
+      }
+    }
+  }
+}

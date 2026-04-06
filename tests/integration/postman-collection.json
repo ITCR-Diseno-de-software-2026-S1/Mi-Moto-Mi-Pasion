@@ -1,0 +1,166 @@
+{
+  "info": {
+    "name": "MiMotoMiPasion - Marketplace API",
+    "description": "Colección de pruebas para la API Serverless de intercambio de partes de motos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "parteId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Partes",
+      "item": [
+        {
+          "name": "POST /partes - Crear parte válida",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Status 201 Created', () => pm.response.to.have.status(201));",
+                "pm.test('Respuesta tiene ID', () => {",
+                "  const body = pm.response.json();",
+                "  pm.expect(body.data.id).to.be.a('string');",
+                "  pm.collectionVariables.set('parteId', body.data.id);",
+                "});",
+                "pm.test('success es true', () => {",
+                "  pm.expect(pm.response.json().success).to.be.true;",
+                "});"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/partes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Carburador Keihin CV40\",\n  \"tipo\": \"motor\",\n  \"categoria\": \"usada\",\n  \"precio\": 95.50,\n  \"descripcion\": \"Carburador en buen estado\",\n  \"vendedor\": \"MotoTest CR\"\n}"
+            }
+          }
+        },
+        {
+          "name": "POST /partes - Datos inválidos",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Status 400 Bad Request', () => pm.response.to.have.status(400));",
+                "pm.test('Tiene errores de validación', () => {",
+                "  const body = pm.response.json();",
+                "  pm.expect(body.success).to.be.false;",
+                "  pm.expect(body.detalles).to.be.an('array');",
+                "});"
+              ]
+            }
+          }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/partes",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"AB\",\n  \"tipo\": \"cocina\",\n  \"precio\": -10\n}"
+            }
+          }
+        },
+        {
+          "name": "GET /partes - Listar todas",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                "pm.test('Respuesta tiene partes y total', () => {",
+                "  const body = pm.response.json();",
+                "  pm.expect(body.data.partes).to.be.an('array');",
+                "  pm.expect(body.data.total).to.be.a('number');",
+                "});"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/partes"
+          }
+        },
+        {
+          "name": "GET /partes?tipo=motor - Filtrar por tipo",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                "pm.test('Filtro aplicado correctamente', () => {",
+                "  const body = pm.response.json();",
+                "  pm.expect(body.data.filtro.tipo).to.equal('motor');",
+                "  body.data.partes.forEach(p => pm.expect(p.tipo).to.equal('motor'));",
+                "});"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/partes?tipo=motor",
+              "query": [{ "key": "tipo", "value": "motor" }]
+            }
+          }
+        },
+        {
+          "name": "GET /partes/{id} - Obtener parte",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                "pm.test('Parte encontrada', () => {",
+                "  const body = pm.response.json();",
+                "  pm.expect(body.data.id).to.equal(pm.collectionVariables.get('parteId'));",
+                "});"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/partes/{{parteId}}"
+          }
+        },
+        {
+          "name": "GET /partes/{id} - No encontrada",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Status 404 Not Found', () => pm.response.to.have.status(404));"
+              ]
+            }
+          }],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/partes/id-inexistente-xyz"
+          }
+        },
+        {
+          "name": "DELETE /partes/{id} - Eliminar parte",
+          "event": [{
+            "listen": "test",
+            "script": {
+              "exec": [
+                "pm.test('Status 200 OK', () => pm.response.to.have.status(200));",
+                "pm.test('ID retornado en respuesta', () => {",
+                "  pm.expect(pm.response.json().data.id).to.equal(pm.collectionVariables.get('parteId'));",
+                "});"
+              ]
+            }
+          }],
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/partes/{{parteId}}"
+          }
+        }
+      ]
+    }
+  ]
+}
